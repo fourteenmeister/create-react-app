@@ -43,7 +43,7 @@ function verifyNoTypeScript() {
   return true;
 }
 
-function verifyTypeScriptSetup() {
+function verifyTypeScriptSetup(packageName) {
   let firstTimeSetup = false;
 
   if (!fs.existsSync(paths.appTsConfig)) {
@@ -257,7 +257,7 @@ function verifyTypeScriptSetup() {
   if (!fs.existsSync(paths.appTypeDeclarations)) {
     fs.writeFileSync(
       paths.appTypeDeclarations,
-      `/// <reference types="react-scripts" />${os.EOL}`
+      `/// <reference types="${packageName}" />${os.EOL}`
     );
   }
 }

@@ -35,6 +35,7 @@ const fs = require('fs');
 const chalk = require('react-dev-utils/chalk');
 const webpack = require('webpack');
 const WebpackDevServer = require('webpack-dev-server');
+const webpackMerge = require('webpack-merge');
 const clearConsole = require('react-dev-utils/clearConsole');
 const checkRequiredFiles = require('react-dev-utils/checkRequiredFiles');
 const {
@@ -54,6 +55,15 @@ const isInteractive = process.stdout.isTTY;
 // Warn and crash if required files are missing
 if (!checkRequiredFiles([paths.appHtml, paths.appIndexJs])) {
   process.exit(1);
+}
+
+function requireModule(path, defaultValue) {
+  try {
+    return require(path);
+  } catch (e) {
+    console.log(e.message);
+    return defaultValue;
+  }
 }
 
 // Tools like Cloud9 rely on this.
@@ -91,7 +101,11 @@ checkBrowsers(paths.appPath, isInteractive)
       // We have not found a port.
       return;
     }
-    const config = configFactory('development');
+    const customWebpackConfig = requireModule(paths.customWebpackConfig);
+    const config = webpackMerge(
+      configFactory('development'),
+      customWebpackConfig
+    );
     const protocol = process.env.HTTPS === 'true' ? 'https' : 'http';
     const appName = require(paths.appPackageJson).name;
     const useTypeScript = fs.existsSync(paths.appTsConfig);

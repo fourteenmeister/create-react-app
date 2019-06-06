@@ -78,6 +78,7 @@ function tryGitInit(appPath) {
 module.exports = function(
   appPath,
   appName,
+  packageName,
   verbose,
   originalDirectory,
   template
@@ -103,7 +104,19 @@ module.exports = function(
 
   // Setup the eslint config
   appPackage.eslintConfig = {
-    extends: 'react-app',
+    extends: [
+      'react-app',
+      'eslint:recommended',
+      'plugin:react/recommended',
+      'plugin:@typescript-eslint/recommended',
+      'prettier',
+      'prettier/@typescript-eslint',
+      'plugin:prettier/recommended',
+    ],
+    plugins: ['react', '@typescript-eslint', 'prettier'],
+    rules: {
+      'prettier/prettier': ['error', { singleQuote: true }],
+    },
   };
 
   // Setup the browsers list
@@ -196,7 +209,7 @@ module.exports = function(
   }
 
   if (useTypeScript) {
-    verifyTypeScriptSetup();
+    verifyTypeScriptSetup(packageName);
   }
 
   if (tryGitInit(appPath)) {
