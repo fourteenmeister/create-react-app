@@ -209,6 +209,9 @@ function createApp(
     name: appName,
     version: '0.1.0',
     private: true,
+    jest: {
+      modulePathIgnorePatterns: ['node_modules'],
+    },
   };
   fs.writeFileSync(
     path.join(root, 'package.json'),
@@ -309,7 +312,15 @@ function shouldUseYarn() {
   }
 }
 
-function install(root, useYarn, usePnp, dependencies, verbose, isOnline) {
+function install(
+  root,
+  useYarn,
+  usePnp,
+  dependencies,
+  verbose,
+  isOnline,
+  isDev
+) {
   return new Promise((resolve, reject) => {
     let command;
     let args;
@@ -321,6 +332,9 @@ function install(root, useYarn, usePnp, dependencies, verbose, isOnline) {
       }
       if (usePnp) {
         args.push('--enable-pnp');
+      }
+      if (isDev) {
+        args.push('--dev');
       }
       [].push.apply(args, dependencies);
 
@@ -347,6 +361,9 @@ function install(root, useYarn, usePnp, dependencies, verbose, isOnline) {
         'error',
       ].concat(dependencies);
 
+      if (isDev) {
+        args.push('--save-dev');
+      }
       if (usePnp) {
         console.log(chalk.yellow("NPM doesn't support PnP."));
         console.log(chalk.yellow('Falling back to the regular installs.'));
@@ -384,6 +401,12 @@ function run(
 ) {
   getInstallPackage(version, originalDirectory).then(packageToInstall => {
     const allDependencies = ['react', 'react-dom', packageToInstall];
+    const devDependencies = [
+      'eslint-config-prettier',
+      'eslint-plugin-prettier',
+      'prettier',
+      'react-hot-loader',
+    ];
     if (useTypescript) {
       allDependencies.push(
         // TODO: get user's node version instead of installing latest
@@ -392,6 +415,7 @@ function run(
         '@types/react-dom',
         // TODO: get version of Jest being used instead of installing latest
         '@types/jest',
+        '@types/webpack-env',
         'typescript'
       );
     }
@@ -421,6 +445,25 @@ function run(
           allDependencies,
           verbose,
           isOnline
+        ).then(() => ({
+          isOnline,
+          packageName,
+        }));
+      })
+      .then(info => {
+        const isOnline = info.isOnline;
+        const packageName = info.packageName;
+        console.log(`Installing devDependencies...`);
+        console.log();
+
+        return install(
+          root,
+          useYarn,
+          usePnp,
+          devDependencies,
+          verbose,
+          isOnline,
+          true
         ).then(() => packageName);
       })
       .then(async packageName => {
@@ -436,7 +479,7 @@ function run(
             cwd: process.cwd(),
             args: nodeArgs,
           },
-          [root, appName, verbose, originalDirectory, template],
+          [root, appName, packageName, verbose, originalDirectory, template],
           `
         var init = require('${packageName}/scripts/init.js');
         init.apply(null, JSON.parse(process.argv[1]));
