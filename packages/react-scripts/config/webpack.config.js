@@ -53,11 +53,15 @@ const cssModuleRegex = /\.module\.css$/;
 const sassRegex = /\.(scss|sass)$/;
 const sassModuleRegex = /\.module\.(scss|sass)$/;
 
+const packageJson = require(paths.appPackageJson);
+
 // This is the production and development configuration.
 // It is focused on developer experience, fast rebuilds, and a minimal bundle.
 module.exports = function(webpackEnv) {
   const isEnvDevelopment = webpackEnv === 'development';
   const isEnvProduction = webpackEnv === 'production';
+
+  const title = packageJson.name || 'React App';
 
   // Webpack uses `publicPath` to determine where the app is being served from.
   // It requires a trailing slash, or the file assets will get an incorrect path.
@@ -323,7 +327,7 @@ module.exports = function(webpackEnv) {
                   extends: [require.resolve('eslint-config-react-app')],
                 },
                 ignore: false,
-                useEslintrc: false,
+                useEslintrc: isEnvDevelopment,
                 // @remove-on-eject-end
               },
               loader: require.resolve('eslint-loader'),
@@ -530,6 +534,9 @@ module.exports = function(webpackEnv) {
           {
             inject: true,
             template: paths.appHtml,
+            templateParameters: {
+              title,
+            },
           },
           isEnvProduction
             ? {
