@@ -1,0 +1,22 @@
+html,
+body {
+  height: 100%;
+  margin: 0;
+}
+
+noscript {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+}
+
+noscript .noscript-wrapper {
+  border: 1px solid;
+  padding: 16px;
+}
+
+noscript .noscript-wrapper h1 {
+  border-bottom: 1px solid;
+}
