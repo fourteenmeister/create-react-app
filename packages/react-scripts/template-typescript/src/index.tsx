@@ -10,11 +10,8 @@ const rootEl = document.getElementById('root');
 ReactDOM.render(<App />, rootEl);
 
 if (module.hot) {
-  module.hot.accept(
-    'containers/App',
-    (): void => {
-      const NextApp = require('containers/App').default;
-      ReactDOM.render(<NextApp />, rootEl);
-    }
-  );
+  module.hot.accept('containers/App', (): void => {
+    const NextApp = require('containers/App').default;
+    ReactDOM.render(<NextApp />, rootEl);
+  });
 }
