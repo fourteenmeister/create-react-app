@@ -306,6 +306,7 @@ module.exports = function(webpackEnv) {
       alias: {
         // Support React Native Web
         // https://www.smashingmagazine.com/2016/08/a-glimpse-into-the-future-with-react-native-for-web/
+        'react-dom': '@hot-loader/react-dom',
         'react-native': 'react-native-web',
       },
       plugins: [
@@ -432,6 +433,7 @@ module.exports = function(webpackEnv) {
                       },
                     },
                   ],
+                  'react-hot-loader/babel',
                 ],
                 // This is a feature of `babel-loader` for webpack (not Babel itself).
                 // It enables caching results in ./node_modules/.cache/babel-loader/

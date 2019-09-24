@@ -400,7 +400,7 @@ function run(
   useTypescript
 ) {
   getInstallPackage(version, originalDirectory).then(packageToInstall => {
-    const allDependencies = ['react', 'react-dom', packageToInstall];
+    const allDependencies = ['@hot-loader/react-dom', 'react', 'react-dom', packageToInstall];
     const devDependencies = [
       'eslint-config-prettier',
       'eslint-plugin-prettier',
