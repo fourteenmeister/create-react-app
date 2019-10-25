@@ -38,6 +38,9 @@ const eslint = require('eslint');
 const getCacheIdentifier = require('react-dev-utils/getCacheIdentifier');
 // @remove-on-eject-end
 const postcssNormalize = require('postcss-normalize');
+const yargs = require('yargs');
+
+const skipTypesChecking = yargs.argv.skipTypesChecking || false;
 
 const appPackageJson = require(paths.appPackageJson);
 
@@ -709,7 +712,7 @@ module.exports = function(webpackEnv) {
           ],
         }),
       // TypeScript type checking
-      useTypeScript &&
+      useTypeScript && !skipTypesChecking &&
         new ForkTsCheckerWebpackPlugin({
           typescript: resolve.sync('typescript', {
             basedir: paths.appNodeModules,
